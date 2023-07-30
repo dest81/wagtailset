@@ -1,0 +1,12 @@
+__pycache__
+*.swp
+*.pyc
+.DS_Store
+node_modules/
+npm-debug.log*
+*.idea/
+/*.egg/
+**/*.egg-info/
+/.cache/
+/.pytest_cache/
+dist/

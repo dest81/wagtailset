@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wagtailset"
+version = "0.0.1"
+authors = [
+  { name="Ihor Marhytich", email="dest81@gmail.com" },
+]
+description = "Set of Wagtail blocks, utils and helpers"
+keywords = ["wagtail", "draftail", "anchors"]
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "wagtail>2.9"
+]
+license = {text = "MIT License"}
+
+[project.urls]
+"Homepage" = "https://github.com/dest81/wagtailset"
+"Bug Tracker" = "https://github.com/dest81/wagtailset/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"wagtailset.draftail_anchors.static" = ["**"]
+"wagtailset.draftail_anchors.templates" = ["**"]
+
+[tool.black]
+line-length = 100
