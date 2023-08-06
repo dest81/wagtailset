@@ -7,9 +7,9 @@ const Icon = window.wagtail.components.Icon;
 const EditorState = window.DraftJS.EditorState;
 const Portal = window.wagtail.components.Portal;
 const Tooltip = window.draftail.Tooltip;
-import slugify from "slugify";
 
-// Implement the new APIs.
+// import PropTypes from "prop-types";
+import slugify from "slugify";
 
 const DECORATORS = [];
 const CONTROLS = [];
@@ -116,10 +116,10 @@ const CopyAnchorButton = ({ identifier }) => {
     setDidCopy(true);
   };
 
-  const classes = "button";
+  const classes = "button button-small";
   return (
     <button
-      class={classes}
+      className={classes}
       style={{ marginLeft: "1rem" }}
       aria-label="Copy anchor identifier"
       aria-live="polite"
@@ -131,53 +131,10 @@ const CopyAnchorButton = ({ identifier }) => {
   );
 };
 
-class HeaderAnchorDecorator extends React.Component {
+class HeaderAnchorDecorator extends TooltipEntity {
   constructor(props) {
     super(props);
-
-    this.state = {
-      showTooltipAt: null,
-    };
-
-    this.onEdit = this.onEdit.bind(this);
-    this.onRemove = this.onRemove.bind(this);
-    this.openTooltip = this.openTooltip.bind(this);
-    this.closeTooltip = this.closeTooltip.bind(this);
   }
-
-  openTooltip(e) {
-    const trigger = e.target.closest("[data-draftail-trigger]");
-
-    // Click is within the tooltip.
-    if (!trigger) {
-      return;
-    }
-
-    const container = trigger.closest("[data-draftail-editor-wrapper]");
-    const containerRect = container.getBoundingClientRect();
-    const rect = trigger.getBoundingClientRect();
-
-    this.setState({
-      showTooltipAt: {
-        container: container,
-        top:
-          rect.top -
-          containerRect.top -
-          (document.documentElement.scrollTop || document.body.scrollTop),
-        left:
-          rect.left -
-          containerRect.left -
-          (document.documentElement.scrollLeft || document.body.scrollLeft),
-        width: rect.width,
-        height: rect.height,
-      },
-    });
-  }
-
-  closeTooltip() {
-    this.setState({ showTooltipAt: null });
-  }
-
   getBlock(editorState) {
     const block_key = editorState.getSelection().getFocusKey();
     return this.props.contentState.getBlockForKey(block_key);
@@ -223,7 +180,8 @@ class HeaderAnchorDecorator extends React.Component {
       "Anchor Link:",
       data.get("anchor") || data.get("id") || slugify(block.getText().toLowerCase()),
     );
-    this.setAnchor(anchor);
+
+    this.setAnchor(slugify(anchor));
   }
 
   render() {
@@ -261,12 +219,12 @@ class HeaderAnchorDecorator extends React.Component {
             <Tooltip target={showTooltipAt} direction="top">
               <span className="Tooltip__link">{url}</span>
               <CopyAnchorButton identifier={anchor} />
-              <button className="button Tooltip__button" onClick={this.onEdit}>
+              <button className="button button-small Tooltip__button" onClick={this.onEdit}>
                 Edit
               </button>
 
               <button
-                className="button button-secondary no Tooltip__button"
+                className="button button-small button-secondary no Tooltip__button"
                 onClick={this.onRemove}
               >
                 Reset
@@ -321,3 +279,8 @@ registerDraftPlugin({
     return newEditorState;
   },
 });
+
+HeaderAnchorDecorator.propTypes = {
+  // contentState: PropTypes.object.isRequired,
+  // decoratedText: PropTypes.string.isRequired
+};
