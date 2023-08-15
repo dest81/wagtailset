@@ -1,7 +1,10 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./static_src/wagtailsetdraftailanchors/js/wagtailset_draftail_anchor.js",
+  entry: [
+    "./static_src/wagtailsetdraftailanchors/js/wagtailset_draftail_anchor.js",
+    "./static_src/wagtailsetdraftailanchors/js/wagtailset_draftail_links.js"
+  ],
   module: {
     rules: [
       {

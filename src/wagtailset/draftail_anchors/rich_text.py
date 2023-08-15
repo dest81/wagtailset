@@ -1,20 +1,26 @@
 from django.conf import settings
-from django.utils.html import format_html
+from django.utils.html import escape, format_html
 from django.utils.module_loading import import_string
-from draftjs_exporter.dom import DOM
 
+from draftjs_exporter.dom import DOM
 from wagtail import VERSION as wagtail_version
 from wagtail.admin.rich_text.converters.contentstate_models import Block
 from wagtail.admin.rich_text.converters.html_to_contentstate import (
     BlockElementHandler,
     InlineEntityElementHandler,
+    LinkElementHandler,
 )
 
 if wagtail_version >= (3, 0):
+    from wagtail.models import Page
     from wagtail.rich_text import LinkHandler
+    from wagtail.rich_text.pages import PageLinkHandler
+    from wagtail.whitelist import check_url
 else:
+    from wagtail.core.models import Page
     from wagtail.core.rich_text import LinkHandler
-
+    from wagtail.core.rich_text.pages import PageLinkHandler
+    from wagtail.core.whitelist import check_url
 
 # We can't use "anchor", as Wagtail uses this internally for links whose hrefs
 # start with "#"
@@ -27,6 +33,62 @@ def render_span(attrs):
 
 def render_a(attrs):
     return format_html('<a href="#{id}" id="{id}" data-id="{id}">', id=attrs["id"])
+
+
+def link_entity(props):
+    """
+    <a linktype="page" id="1" attrs>internal page link</a>
+    """
+    id_ = props.get("id")
+    link_props = {}
+
+    if id_ is not None:
+        link_props["linktype"] = "page"
+        link_props["id"] = id_
+    else:
+        link_props["href"] = check_url(props.get("url"))
+
+    hash_ = props.get("hash")
+    if hash_:
+        link_props["hash"] = hash_
+
+    return DOM.create_element("a", link_props, props["children"])
+
+
+class PageHashedLinkHandler(PageLinkHandler):
+    @classmethod
+    def expand_db_attributes(cls, attrs):
+        try:
+            page = cls.get_instance(attrs)
+            url = escape(page.localized.specific.url)
+            hash_ = attrs.get("hash")
+            if hash_:
+                url = f"{url}#{hash_}"
+            return '<a href="%s">' % url
+        except Page.DoesNotExist:
+            return "<a>"
+
+
+class PageHashedLinkElementHandler(LinkElementHandler):
+    def get_attribute_data(self, attrs):
+        try:
+            page = Page.objects.get(id=attrs["id"]).specific
+        except Page.DoesNotExist:
+            # retain ID so that it's still identified as a page link (albeit a broken one)
+            return {
+                "id": int(attrs["id"]),
+                "url": None,
+                "parentId": None,
+                "hash": attrs.get("hash"),
+            }
+
+        parent_page = page.get_parent()
+        return {
+            "id": page.id,
+            "url": page.url,
+            "hash": attrs.get("hash"),
+            "parentId": parent_page.id if parent_page else None,
+        }
 
 
 class AnchorIdentifierLinkHandler(LinkHandler):
