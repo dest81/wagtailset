@@ -7,9 +7,12 @@ const Icon = window.wagtail.components.Icon;
 const EditorState = window.DraftJS.EditorState;
 const Portal = window.wagtail.components.Portal;
 const Tooltip = window.draftail.Tooltip;
+const LinkModalWorkflowSource = window.draftail.LinkModalWorkflowSource;
 
-// import PropTypes from "prop-types";
 import slugify from "slugify";
+// import PropTypes from "prop-types";
+
+import {onPasteLink, Link} from './wagtailset_draftail_links.js';
 
 const DECORATORS = [];
 const CONTROLS = [];
@@ -280,7 +283,15 @@ registerDraftPlugin({
   },
 });
 
+
 HeaderAnchorDecorator.propTypes = {
   // contentState: PropTypes.object.isRequired,
   // decoratedText: PropTypes.string.isRequired
 };
+
+window.draftail.registerPlugin({
+  type: "LINK",
+  source: LinkModalWorkflowSource,
+  decorator: Link,
+  onPaste: onPasteLink,
+});

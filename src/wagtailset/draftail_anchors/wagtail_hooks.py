@@ -1,19 +1,21 @@
-from wagtail import VERSION as wagtail_version
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
+from wagtail import VERSION as wagtail_version
 
+from .rich_text import (
+    AnchorBlockConverter,
+    AnchorBlockHandler,
+    AnchorIdentifierLinkHandler,
+    AnchorIndentifierEntityElementHandler,
+    PageHashedLinkElementHandler,
+    PageHashedLinkHandler,
+    anchor_identifier_entity_decorator,
+    link_entity,
+)
 
 if wagtail_version >= (3, 0):
     from wagtail import hooks
 else:
     from wagtail.core import hooks
-
-from .rich_text import (
-    AnchorBlockConverter,
-    AnchorBlockHandler,
-    AnchorIndentifierEntityElementHandler,
-    AnchorIdentifierLinkHandler,
-    anchor_identifier_entity_decorator,
-)
 
 
 @hooks.register("register_icons")
@@ -46,6 +48,21 @@ def register_rich_text_anchor_identifier_feature(features):
             control,
             js=["wagtailsetdraftailanchors/js/wagtailset-draftail-anchor.js"],
         ),
+    )
+
+    features.default_features.append("link")
+    features.register_link_type(PageHashedLinkHandler)
+
+    features.register_converter_rule(
+        "contentstate",
+        "link",
+        {
+            "from_database_format": {
+                # "a[href]": ExternalLinkElementHandler("LINK"),
+                'a[linktype="page"]': PageHashedLinkElementHandler("LINK"),
+            },
+            "to_database_format": {"entity_decorators": {"LINK": link_entity}},
+        },
     )
 
     features.register_converter_rule(
