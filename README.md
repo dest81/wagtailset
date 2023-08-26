@@ -11,7 +11,7 @@ Install using `pip`:
 pip install wagtailset
 ```
 
-## Blocks
+## Table of Contents
 
  - [ Wagtail draftail anchors](#wagtail_draftail_anchors)
  - [ Wagtail draftail anchored internal links](#wagtail_draftail_anchored_internal_links)
