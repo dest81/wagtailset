@@ -1,7 +1,15 @@
+<h1 align="center">Wagtail set</h1<p align="center">
 
-# Wagtailset
+<p align="center">
+<a href="https://pypi.org/project/wagtailset"><img alt="PyPI" src="https://img.shields.io/pypi/v/wagtailset?color=blue"></a>
+<a href="https://pypi.org/project/wagtailset"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/wagtailset?color=blue"></a>
+<a href="https://pypi.org/project/wagtailset"><img alt="PyPI - License" src="https://img.shields.io/pypi/l/wagtailset?color=blue"></a>
+<a href="https://github.com/dest81/wagtailset"><img alt="Lines of code" src="https://tokei.rs/b1/github/dest81/wagtailset?category=lines"></a>
+<a href="https://pypi.org/project/wagtailset"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/wagtailset?color=blue"></a>
+<a href="https://github.com/dest81/wagtailset/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/dest81/wagtailset?color=blue"></a>
+</p>
 
-Set of Wagtail blocks, utils and helpers.
+<h4 align="center">Set of Wagtail blocks, utils and helpers.</h4<p align="center">
 
 ## Installation
 
