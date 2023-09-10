@@ -1,4 +1,4 @@
-<h1 align="center">Wagtail set</h1<p align="center">
+<h1 align="center">Wagtail set</h1>
 
 <p align="center">
 <a href="https://pypi.org/project/wagtailset"><img alt="PyPI" src="https://img.shields.io/pypi/v/wagtailset?color=blue"></a>
@@ -9,7 +9,7 @@
 <a href="https://github.com/dest81/wagtailset/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/dest81/wagtailset?color=blue"></a>
 </p>
 
-<h4 align="center">Set of Wagtail blocks, utils and helpers.</h4<p align="center">
+<h4 align="center">Wagtail anchors set.</h4>
 
 ## Installation
 
