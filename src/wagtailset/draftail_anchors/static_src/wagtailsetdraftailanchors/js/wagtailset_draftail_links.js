@@ -182,7 +182,7 @@ class Link extends TooltipEntity {
 
     let fullUrl = url;
     if (isInternalLink && hash) {
-      fullUrl = `${url}#{hash}`;
+      fullUrl = `${url}#${hash}`;
     }
 
     return (
