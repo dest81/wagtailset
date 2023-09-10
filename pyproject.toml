@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wagtailset"
-version = "1.0.0"
+version = "1.1.0"
 authors = [
   { name="Ihor Marhytich", email="dest81@gmail.com" },
 ]
-description = "Set of Wagtail blocks, utils and helpers"
+description = "Wagtail anchors set"
 keywords = ["wagtail", "draftail", "anchors"]
 readme = "README.md"
 requires-python = ">=3.7"
