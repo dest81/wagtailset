@@ -85,22 +85,50 @@ class AnchorIdentifierSource extends React.Component {
   }
 }
 
-const getAnchorIdentifierAttributes = data => {
-  const url = data.anchor || null;
-  let icon = <Icon name="anchor" />;
-  let label = `#${url}`;
+class AnchorIdentifier extends TooltipEntity {
 
-  return {
-    url,
-    icon,
-    label,
-  };
-};
+  render() {
+    const { showTooltipAt } = this.state;
+    const { entityKey, contentState, children } = this.props;
+    const data = contentState.getEntity(entityKey).getData();
+    const anchor = data.anchor || null;
+    return (
+      <a
+        href=""
+        role="button"
+        onMouseUp={this.openTooltip}
+        className="TooltipEntity"
+        data-draftail-trigger
+      >
+        <Icon name="anchor" className="TooltipEntity__icon" />
+        {children}
+        {showTooltipAt && (
+          <Portal
+            node={showTooltipAt.container}
+            onClose={this.closeTooltip}
+            closeOnClick
+            closeOnType
+            closeOnResize
+          >
+            <Tooltip target={showTooltipAt} direction="top">
+              <span className="Tooltip__link">{anchor}</span>
+              <CopyAnchorButton identifier={anchor} />
+              <button className="button button-small Tooltip__button" onClick={this.onEdit}>
+                Edit
+              </button>
 
-const AnchorIdentifier = props => {
-  const { entityKey, contentState } = props;
-  const data = contentState.getEntity(entityKey).getData();
-  return <TooltipEntity {...props} {...getAnchorIdentifierAttributes(data)} />;
+              <button
+                className="button button-small button-secondary no Tooltip__button"
+                onClick={this.onRemove}
+              >
+                Reset
+              </button>
+            </Tooltip>
+          </Portal>
+        )}
+      </a>
+    );
+  }
 };
 
 window.draftail.registerPlugin({
