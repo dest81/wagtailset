@@ -183,8 +183,9 @@ class HeaderAnchorDecorator extends TooltipEntity {
       "Anchor Link:",
       data.get("anchor") || data.get("id") || slugify(block.getText().toLowerCase()),
     );
-
-    this.setAnchor(slugify(anchor));
+    if (anchor) {
+      this.setAnchor(slugify(anchor));
+    }
   }
 
   render() {
