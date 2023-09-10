@@ -231,8 +231,7 @@ class HeaderAnchorDecorator extends TooltipEntity {
     // Contrary to what JSX A11Y says, this should be a button but it shouldn't be focusable.
     /* eslint-disable springload/jsx-a11y/interactive-supports-focus */
     return (
-      <a
-        href=""
+      <span
         role="button"
         // Use onMouseUp to preserve focus in the text even after clicking.
         onMouseUp={this.openTooltip}
@@ -240,6 +239,7 @@ class HeaderAnchorDecorator extends TooltipEntity {
         data-draftail-trigger
       >
         {children}
+        <span style={{ paddingLeft: "0.5rem" }} className="icon icon-link"></span>
         {showTooltipAt && (
           <Portal
             node={showTooltipAt.container}
@@ -264,7 +264,7 @@ class HeaderAnchorDecorator extends TooltipEntity {
             </Tooltip>
           </Portal>
         )}
-      </a>
+      </span>
     );
   }
 }
