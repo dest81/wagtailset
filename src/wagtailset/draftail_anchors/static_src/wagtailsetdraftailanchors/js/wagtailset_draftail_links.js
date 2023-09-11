@@ -10,7 +10,7 @@ const Tooltip = window.draftail.Tooltip;
 // import PropTypes from "prop-types";
 import slugify from "slugify";
 
-const shortenLabel = label => {
+const shortenLabel = (label) => {
   let shortened = label;
   if (shortened.length > 25) {
     shortened = `${shortened.slice(0, 20)}…`;
@@ -19,7 +19,7 @@ const shortenLabel = label => {
   return shortened;
 };
 
-const gettext = text => {
+const gettext = (text) => {
   const djangoGettext = window.django?.gettext;
 
   if (djangoGettext) {
@@ -27,18 +27,18 @@ const gettext = text => {
   }
 
   return text;
-}
+};
 
 const LINK_ICON = <Icon name="link" />;
 const BROKEN_LINK_ICON = <Icon name="warning" />;
 const MAIL_ICON = <Icon name="mail" />;
 
-const getEmailAddress = mailto => mailto.replace("mailto:", "").split("?")[0];
-const getPhoneNumber = tel => tel.replace("tel:", "").split("?")[0];
-const getDomainName = url => url.replace(/(^\w+:|^)\/\//, "").split("/")[0];
+const getEmailAddress = (mailto) => mailto.replace("mailto:", "").split("?")[0];
+const getPhoneNumber = (tel) => tel.replace("tel:", "").split("?")[0];
+const getDomainName = (url) => url.replace(/(^\w+:|^)\/\//, "").split("/")[0];
 
 // Determines how to display the link based on its type: page, mail, hash or external.
-const getLinkAttributes = data => {
+const getLinkAttributes = (data) => {
   const url = data.url || null;
   let icon;
   let label;
@@ -74,7 +74,8 @@ const djangoUserRegex =
   /(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*$|^"([\001-\010\013\014\016-\037!#-[\]-\177]|\\[\001-\011\013\014\016-\177])*"$)/i;
 // Compared to Django, changed to remove the end-of-domain `-` check that was done with a negative lookbehind `(?<!-)` (unsupported in Safari), and disallow all TLD hyphens instead.
 // const djangoDomainRegex = /((?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+)(?:[A-Z0-9-]{2,63}(?<!-))$/i;
-const djangoDomainRegex = /((?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+)(?:[A-Z0-9]{2,63})$/i;
+const djangoDomainRegex =
+  /((?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+)(?:[A-Z0-9]{2,63})$/i;
 /**
  * See https://docs.djangoproject.com/en/4.0/_modules/django/core/validators/#URLValidator.
  */
@@ -114,7 +115,13 @@ const onPasteLink = (text, html, editorState, { setEditorState }) => {
   let nextState;
 
   if (selection.isCollapsed()) {
-    content = Modifier.insertText(content, selection, text, undefined, entityKey);
+    content = Modifier.insertText(
+      content,
+      selection,
+      text,
+      undefined,
+      entityKey,
+    );
     nextState = EditorState.push(editorState, content, "insert-characters");
   } else {
     nextState = RichUtils.toggleLink(editorState, selection, entityKey);
@@ -125,8 +132,8 @@ const onPasteLink = (text, html, editorState, { setEditorState }) => {
 };
 
 const buttonContainerStyle = {
-   float: 'right'
-}
+  float: "right",
+};
 
 class Link extends TooltipEntity {
   constructor(props) {
@@ -165,7 +172,11 @@ class Link extends TooltipEntity {
     const selection = editorState.getSelection();
     content = Modifier.mergeBlockData(nextContent, selection, { hash: hash });
 
-    newEditorState = EditorState.push(editorState, content, editorState.getLastChangeType());
+    newEditorState = EditorState.push(
+      editorState,
+      content,
+      editorState.getLastChangeType(),
+    );
     newEditorState = EditorState.acceptSelection(newEditorState, selection);
     this.props.setEditorState(newEditorState);
   }
@@ -206,17 +217,20 @@ class Link extends TooltipEntity {
           >
             <Tooltip target={showTooltipAt} direction="top">
               <div>
-                  <a
-                    href={fullUrl}
-                    title={url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="Tooltip__link"
+                <a
+                  href={fullUrl}
+                  title={url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="Tooltip__link"
+                >
+                  {shortenLabel(label)}
+                </a>
+                <div style={buttonContainerStyle}>
+                  <button
+                    className="button button-small Tooltip__button"
+                    onClick={this.onEdit}
                   >
-                    {shortenLabel(label)}
-                  </a>
-                <div style={ buttonContainerStyle }>
-                  <button className="button button-small Tooltip__button" onClick={this.onEdit}>
                     Edit
                   </button>
 
@@ -228,32 +242,35 @@ class Link extends TooltipEntity {
                   </button>
                 </div>
               </div>
-              {isInternalLink &&
-              <div>
-              <hr />
+              {isInternalLink && (
+                <div>
+                  <hr />
                   <a
                     href={fullUrl}
                     title={url}
                     target="_blank"
                     rel="noreferrer"
                     className="Tooltip__link"
-                    style={{ marginTop: '-1em' }}
+                    style={{ marginTop: "-1em" }}
                   >
                     Anchor: <br /> #{shortenLabel(hash)}
                   </a>
-                <div style={ buttonContainerStyle }>
-                  <button className="button button-small Tooltip__button" onClick={this.onSetHash}>
-                    {hash ? "Edit" : "Add"}
-                  </button>
-                  <button
-                    className="button button-small button-secondary no Tooltip__button"
-                    onClick={this.onRemoveHash}
-                  >
-                    Remove
-                  </button>
+                  <div style={buttonContainerStyle}>
+                    <button
+                      className="button button-small Tooltip__button"
+                      onClick={this.onSetHash}
+                    >
+                      {hash ? "Edit" : "Add"}
+                    </button>
+                    <button
+                      className="button button-small button-secondary no Tooltip__button"
+                      onClick={this.onRemoveHash}
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
-              </div>
-              }
+              )}
             </Tooltip>
           </Portal>
         )}

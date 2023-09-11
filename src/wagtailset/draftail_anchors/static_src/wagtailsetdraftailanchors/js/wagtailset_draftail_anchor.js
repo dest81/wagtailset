@@ -12,23 +12,23 @@ const LinkModalWorkflowSource = window.draftail.LinkModalWorkflowSource;
 import slugify from "slugify";
 // import PropTypes from "prop-types";
 
-import {onPasteLink, Link} from './wagtailset_draftail_links.js';
+import { onPasteLink, Link } from "./wagtailset_draftail_links.js";
 
 const DECORATORS = [];
 const CONTROLS = [];
 const DRAFT_PLUGINS = [];
 
-const registerDecorator = decorator => {
+const registerDecorator = (decorator) => {
   DECORATORS.push(decorator);
   return DECORATORS;
 };
 
-const registerControl = control => {
+const registerControl = (control) => {
   CONTROLS.push(control);
   return CONTROLS;
 };
 
-const registerDraftPlugin = plugin => {
+const registerDraftPlugin = (plugin) => {
   DRAFT_PLUGINS.push(plugin);
   return DRAFT_PLUGINS;
 };
@@ -86,7 +86,6 @@ class AnchorIdentifierSource extends React.Component {
 }
 
 class AnchorIdentifier extends TooltipEntity {
-
   render() {
     const { showTooltipAt } = this.state;
     const { entityKey, contentState, children } = this.props;
@@ -129,7 +128,7 @@ class AnchorIdentifier extends TooltipEntity {
       </a>
     );
   }
-};
+}
 
 window.draftail.registerPlugin({
   type: "ANCHOR-IDENTIFIER",
@@ -140,7 +139,7 @@ window.draftail.registerPlugin({
 const CopyAnchorButton = ({ identifier }) => {
   const [didCopy, setDidCopy] = React.useState(false);
 
-  const copyText = event => {
+  const copyText = (event) => {
     // Prevent the button click event from submitting the page form
     event.preventDefault();
     navigator.clipboard.writeText(identifier);
@@ -311,7 +310,6 @@ registerDraftPlugin({
     return newEditorState;
   },
 });
-
 
 HeaderAnchorDecorator.propTypes = {
   // contentState: PropTypes.object.isRequired,
