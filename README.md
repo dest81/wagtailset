@@ -21,10 +21,10 @@ pip install wagtailset
 
 ## Table of Contents
 
- - [ Wagtail draftail anchors](#wagtail_draftail_anchors)
- - [ Wagtail draftail anchored internal links](#wagtail_draftail_anchored_internal_links)
+ - [ Wagtail draftail anchors](#wagtailset_draftail_anchors)
+ - [ Wagtail draftail anchored internal links](#wagtailset_draftail_anchored_internal_links)
 
-<div id="wagtail_draftail_anchors" />
+<div id="wagtailset_draftail_anchors" />
 
 ## Wagtail Draftail Anchors
 
@@ -63,7 +63,7 @@ This package provides an alternative renderer that renders `anchor-identifier` e
 The desired renderer can be specified using the `DRAFTAIL_ANCHORS_RENDERER` setting. To use the `span` renderer, configure your application as follows:
 
 ``` python
-DRAFTAIL_ANCHORS_RENDERER = "wagtail_draftail_anchors.rich_text.render_span"
+DRAFTAIL_ANCHORS_RENDERER = "wagtailset.draftail_anchors.rich_text.render_span"
 ```
 
 It is possible to define your own renderer. It should be a callable that takes a `dict` of attributes, and returns a string containing the opening tag of the HTML element that represents the anchor target. The `dict` passed to the renderer, for an anchor with an identifier of `"my-anchor"`, would look like the following:
@@ -74,9 +74,9 @@ It is possible to define your own renderer. It should be a callable that takes a
 
 If you define your own renderer, you should set the value of `DRAFTAIL_ANCHORS_RENDERER` to your custom renderer's import path.
 
-See `render_span` and `render_a` in `wagtail_draftail_anchors.rich_text` for examples.
+See `render_span` and `render_a` in `wagtailset.draftail_anchors.rich_text` for examples.
 
-<div id="wagtail_draftail_anchored_internal_links" />
+<div id="wagtailset_draftail_anchored_internal_links" />
 
 
 ## Wagtail Draftail Anchored Internal Links

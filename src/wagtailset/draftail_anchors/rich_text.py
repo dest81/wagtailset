@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.utils.html import escape, format_html
 from django.utils.module_loading import import_string
-
 from draftjs_exporter.dom import DOM
 from wagtail import VERSION as wagtail_version
 from wagtail.admin.rich_text.converters.contentstate_models import Block

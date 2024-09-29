@@ -12,6 +12,7 @@ from .rich_text import (
     link_entity,
 )
 
+from wagtail.admin.rich_text.converters.html_to_contentstate import ExternalLinkElementHandler
 if wagtail_version >= (3, 0):
     from wagtail import hooks
 else:
@@ -58,8 +59,8 @@ def register_rich_text_anchor_identifier_feature(features):
         "link",
         {
             "from_database_format": {
-                # "a[href]": ExternalLinkElementHandler("LINK"),
-                'a[linktype="page"]': PageHashedLinkElementHandler("LINK"),
+                "a[href]": ExternalLinkElementHandler("LINK"),
+                "a[linktype='page']": PageHashedLinkElementHandler("LINK"),
             },
             "to_database_format": {"entity_decorators": {"LINK": link_entity}},
         },
