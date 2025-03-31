@@ -56,6 +56,42 @@ def link_entity(props):
 
 class PageHashedLinkHandler(PageLinkHandler):
     @classmethod
+    def get_many(cls, attrs_list, custom=False):
+        # Override LinkHandler.get_many to reduce database queries through the
+        # use of PageQuerySet.specific() instead of QuerySet.in_bulk().
+        instance_ids = [attrs.get("id") for attrs in attrs_list]
+        qs = Page.objects.filter(id__in=instance_ids).defer_streamfields().specific()
+        pages_by_str_id = {str(page.id): page for page in qs}
+
+        pages_data = []
+        for attr in attrs_list:
+            page = pages_by_str_id.get(str(attr["id"]))
+            if page:
+                pages_data.append(
+                    {"url": escape(page.localized.url), "hash": attr.get("hash")}
+                )
+        return pages_data
+
+    @classmethod
+    def build_a_tag(cls, page_data):
+        try:
+            url = page_data["url"]
+            hash_ = page_data["hash"]
+            if hash_:
+                url = f"{url}#{hash_}"
+            return f'<a href="{url}">'
+        except Page.DoesNotExist:
+            return "<a>"
+
+    @classmethod
+    def expand_db_attributes_many(cls, attrs_list):
+        return [
+            cls.build_a_tag(page_data)
+            for page_data in cls.get_many(attrs_list, custom=True)
+        ]
+
+    # wagtail <6.0
+    @classmethod
     def expand_db_attributes(cls, attrs):
         try:
             page = cls.get_instance(attrs)
