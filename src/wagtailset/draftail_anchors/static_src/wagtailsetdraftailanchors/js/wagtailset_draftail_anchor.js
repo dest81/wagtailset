@@ -286,9 +286,6 @@ registerDraftPlugin({
     // a slugified version of their contents as 'anchor', for use
     // in generating anchor links consistently with their displayed form
     let content = editorState.getCurrentContent();
-    if (content == PluginFunctions.getEditorState().getCurrentContent()) {
-      return editorState;
-    }
     const blocks = content.getBlockMap();
     const selection = editorState.getSelection();
     let newEditorState = editorState;
