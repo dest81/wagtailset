@@ -289,6 +289,7 @@ registerDraftPlugin({
     const blocks = content.getBlockMap();
     const selection = editorState.getSelection();
     let newEditorState = editorState;
+    let contentChanged = false;
     for (let [key, block] of blocks.entries()) {
       if (block.getType().includes("header")) {
         const blockSelection = SelectionState.createEmpty(key);
@@ -300,7 +301,11 @@ registerDraftPlugin({
         let newData = new Map();
         newData.set("id", slugify(block.getText().toLowerCase()));
         content = Modifier.mergeBlockData(content, blockSelection, newData);
+        contentChanged = true;
       }
+    }
+    if(!contentChanged){
+      return editorState;
     }
     newEditorState = EditorState.push(editorState, content, editorState.getLastChangeType());
     newEditorState = EditorState.acceptSelection(newEditorState, selection);
