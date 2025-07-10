@@ -275,6 +275,7 @@ function headingStrategy(contentBlock, callback, contentState) {
 }
 
 let previousContentState = null;
+let previousUndoStackSize = 0;
 
 registerDraftPlugin({
   decorators: [
@@ -287,6 +288,14 @@ registerDraftPlugin({
     // if content has been modified, update all heading blocks's data with
     // a slugified version of their contents as 'anchor', for use
     // in generating anchor links consistently with their displayed form
+
+    // check if it is undo then return editorState without change
+    const undoStack = editorState.getUndoStack();
+    const undoSize = undoStack.size;
+    if (undoSize < previousUndoStackSize) {
+      return editorState;
+    }
+    previousUndoStackSize = undoSize;
 
     let content = editorState.getCurrentContent();
 
