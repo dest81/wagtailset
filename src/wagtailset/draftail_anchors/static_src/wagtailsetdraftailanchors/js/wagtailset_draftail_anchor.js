@@ -208,7 +208,7 @@ class HeaderAnchorDecorator extends TooltipEntity {
     const data = this.getData(editorState);
     const anchor = window.prompt(
       "Anchor Link:",
-      data.get("anchor") || data.get("id") || slugify(block.getText().toLowerCase()),
+      data.get("anchor") || data.get("id") || slugify(block.getText().toLowerCase())
     );
     if (anchor) {
       this.setAnchor(slugify(anchor));
@@ -274,6 +274,8 @@ function headingStrategy(contentBlock, callback, contentState) {
   }
 }
 
+let previousContentState = null;
+
 registerDraftPlugin({
   decorators: [
     {
@@ -285,13 +287,19 @@ registerDraftPlugin({
     // if content has been modified, update all heading blocks's data with
     // a slugified version of their contents as 'anchor', for use
     // in generating anchor links consistently with their displayed form
+
     let content = editorState.getCurrentContent();
-    if (content == PluginFunctions.getEditorState().getCurrentContent()) {
+
+    // check if the content state has changed compared to the previous one
+    if (previousContentState && content.equals(previousContentState)) {
       return editorState;
     }
+
     const blocks = content.getBlockMap();
     const selection = editorState.getSelection();
     let newEditorState = editorState;
+    let contentChanged = false;
+
     for (let [key, block] of blocks.entries()) {
       if (block.getType().includes("header")) {
         const blockSelection = SelectionState.createEmpty(key);
@@ -300,13 +308,20 @@ registerDraftPlugin({
         if (data.get("anchor")) {
           continue;
         }
-        let newData = new Map();
-        newData.set("id", slugify(block.getText().toLowerCase()));
-        content = Modifier.mergeBlockData(content, blockSelection, newData);
+        let newId = slugify(block.getText().toLowerCase());
+        if (data.get("id") != newId) {
+          let newData = new Map();
+          newData.set("id", newId);
+          content = Modifier.mergeBlockData(content, blockSelection, newData);
+          contentChanged = true;
+        }
       }
     }
-    newEditorState = EditorState.push(editorState, content, editorState.getLastChangeType());
-    newEditorState = EditorState.acceptSelection(newEditorState, selection);
+    if (contentChanged) {
+      newEditorState = EditorState.push(editorState, content, editorState.getLastChangeType());
+      newEditorState = EditorState.acceptSelection(newEditorState, selection);
+    }
+    previousContentState = newEditorState.getCurrentContent();
     return newEditorState;
   },
 });
