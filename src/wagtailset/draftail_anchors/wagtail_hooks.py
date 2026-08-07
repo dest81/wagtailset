@@ -158,7 +158,8 @@ def register_rich_text_page_hashed_feature(features):
                     "parentId",
                     "hash",  # adds 'hash' to draftail memory states
                 ],
-            }
+            },
+            js=["wagtailsetdraftailanchors/js/wagtailset-draftail-links.js"],
         ),
     )
 
