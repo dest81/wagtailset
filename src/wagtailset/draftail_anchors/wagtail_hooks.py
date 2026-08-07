@@ -1,5 +1,6 @@
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 from wagtail import VERSION as wagtail_version
+from wagtail.admin.rich_text.editors.draftail.features import EntityFeature
 
 from .rich_text import (
     AnchorBlockConverter,
@@ -12,7 +13,10 @@ from .rich_text import (
     link_entity,
 )
 
-from wagtail.admin.rich_text.converters.html_to_contentstate import ExternalLinkElementHandler
+from wagtail.admin.rich_text.converters.html_to_contentstate import (
+    ExternalLinkElementHandler,
+)
+
 if wagtail_version >= (3, 0):
     from wagtail import hooks
 else:
@@ -52,7 +56,111 @@ def register_rich_text_anchor_identifier_feature(features):
     )
 
     features.default_features.append("link")
+
+    features.register_converter_rule(
+        "contentstate",
+        feature_name,
+        {
+            # Note here that the conversion is more complicated than for blocks and inline styles.
+            # 'from_database_format': {'a[data-anchor][id]': AnchorIndentifierEntityElementHandler(type_)},
+            "from_database_format": {
+                "a[data-id]": AnchorIndentifierEntityElementHandler(type_)
+            },
+            "to_database_format": {
+                "entity_decorators": {type_: anchor_identifier_entity_decorator}
+            },
+        },
+    )
+
+    features.register_converter_rule(
+        "contentstate",
+        "h1",
+        {
+            "from_database_format": {"h1": AnchorBlockHandler("header-one")},
+            "to_database_format": {
+                "block_map": {"header-one": AnchorBlockConverter("h1")}
+            },
+        },
+    )
+
+    features.register_converter_rule(
+        "contentstate",
+        "h2",
+        {
+            "from_database_format": {"h2": AnchorBlockHandler("header-two")},
+            "to_database_format": {
+                "block_map": {"header-two": AnchorBlockConverter("h2")}
+            },
+        },
+    )
+
+    features.register_converter_rule(
+        "contentstate",
+        "h3",
+        {
+            "from_database_format": {"h3": AnchorBlockHandler("header-three")},
+            "to_database_format": {
+                "block_map": {"header-three": AnchorBlockConverter("h3")}
+            },
+        },
+    )
+
+    features.register_converter_rule(
+        "contentstate",
+        "h4",
+        {
+            "from_database_format": {"h4": AnchorBlockHandler("header-four")},
+            "to_database_format": {
+                "block_map": {"header-four": AnchorBlockConverter("h4")}
+            },
+        },
+    )
+
+    features.register_converter_rule(
+        "contentstate",
+        "h5",
+        {
+            "from_database_format": {"h5": AnchorBlockHandler("header-five")},
+            "to_database_format": {
+                "block_map": {"header-five": AnchorBlockConverter("h5")}
+            },
+        },
+    )
+
+    features.register_converter_rule(
+        "contentstate",
+        "h6",
+        {
+            "from_database_format": {"h6": AnchorBlockHandler("header-six")},
+            "to_database_format": {
+                "block_map": {"header-six": AnchorBlockConverter("h6")}
+            },
+        },
+    )
+
+    features.register_link_type(AnchorIdentifierLinkHandler)
+
+
+@hooks.register("register_rich_text_features")
+def register_rich_text_page_hashed_feature(features):
     features.register_link_type(PageHashedLinkHandler)
+
+    # Fixes issue #7: this updates Draftail's whitelist attributes without
+    features.register_editor_plugin(
+        "draftail",
+        "link",
+        EntityFeature(
+            {
+                "type": "LINK",
+                "attributes": [
+                    "url",
+                    "id",
+                    "parentId",
+                    "hash",  # adds 'hash' to draftail memory states
+                ],
+            }
+        ),
+    )
 
     features.register_converter_rule(
         "contentstate",
@@ -65,72 +173,3 @@ def register_rich_text_anchor_identifier_feature(features):
             "to_database_format": {"entity_decorators": {"LINK": link_entity}},
         },
     )
-
-    features.register_converter_rule(
-        "contentstate",
-        feature_name,
-        {
-            # Note here that the conversion is more complicated than for blocks and inline styles.
-            # 'from_database_format': {'a[data-anchor][id]': AnchorIndentifierEntityElementHandler(type_)},
-            "from_database_format": {"a[data-id]": AnchorIndentifierEntityElementHandler(type_)},
-            "to_database_format": {
-                "entity_decorators": {type_: anchor_identifier_entity_decorator}
-            },
-        },
-    )
-
-    features.register_converter_rule(
-        "contentstate",
-        "h1",
-        {
-            "from_database_format": {"h1": AnchorBlockHandler("header-one")},
-            "to_database_format": {"block_map": {"header-one": AnchorBlockConverter("h1")}},
-        },
-    )
-
-    features.register_converter_rule(
-        "contentstate",
-        "h2",
-        {
-            "from_database_format": {"h2": AnchorBlockHandler("header-two")},
-            "to_database_format": {"block_map": {"header-two": AnchorBlockConverter("h2")}},
-        },
-    )
-
-    features.register_converter_rule(
-        "contentstate",
-        "h3",
-        {
-            "from_database_format": {"h3": AnchorBlockHandler("header-three")},
-            "to_database_format": {"block_map": {"header-three": AnchorBlockConverter("h3")}},
-        },
-    )
-
-    features.register_converter_rule(
-        "contentstate",
-        "h4",
-        {
-            "from_database_format": {"h4": AnchorBlockHandler("header-four")},
-            "to_database_format": {"block_map": {"header-four": AnchorBlockConverter("h4")}},
-        },
-    )
-
-    features.register_converter_rule(
-        "contentstate",
-        "h5",
-        {
-            "from_database_format": {"h5": AnchorBlockHandler("header-five")},
-            "to_database_format": {"block_map": {"header-five": AnchorBlockConverter("h5")}},
-        },
-    )
-
-    features.register_converter_rule(
-        "contentstate",
-        "h6",
-        {
-            "from_database_format": {"h6": AnchorBlockHandler("header-six")},
-            "to_database_format": {"block_map": {"header-six": AnchorBlockConverter("h6")}},
-        },
-    )
-
-    features.register_link_type(AnchorIdentifierLinkHandler)
