@@ -70,12 +70,10 @@ const getLinkAttributes = (data) => {
   };
 };
 
-const djangoUserRegex =
-  /(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*$|^"([\001-\010\013\014\016-\037!#-[\]-\177]|\\[\001-\011\013\014\016-\177])*"$)/i;
+const djangoUserRegex = /(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*$|^"([\001-\010\013\014\016-\037!#-[\]-\177]|\\[\001-\011\013\014\016-\177])*"$)/i;
 // Compared to Django, changed to remove the end-of-domain `-` check that was done with a negative lookbehind `(?<!-)` (unsupported in Safari), and disallow all TLD hyphens instead.
 // const djangoDomainRegex = /((?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+)(?:[A-Z0-9-]{2,63}(?<!-))$/i;
-const djangoDomainRegex =
-  /((?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+)(?:[A-Z0-9]{2,63})$/i;
+const djangoDomainRegex = /((?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+)(?:[A-Z0-9]{2,63})$/i;
 /**
  * See https://docs.djangoproject.com/en/4.0/_modules/django/core/validators/#URLValidator.
  */
@@ -115,13 +113,7 @@ const onPasteLink = (text, html, editorState, { setEditorState }) => {
   let nextState;
 
   if (selection.isCollapsed()) {
-    content = Modifier.insertText(
-      content,
-      selection,
-      text,
-      undefined,
-      entityKey,
-    );
+    content = Modifier.insertText(content, selection, text, undefined, entityKey);
     nextState = EditorState.push(editorState, content, "insert-characters");
   } else {
     nextState = RichUtils.toggleLink(editorState, selection, entityKey);
@@ -172,11 +164,7 @@ class Link extends TooltipEntity {
     const selection = editorState.getSelection();
     content = Modifier.mergeBlockData(nextContent, selection, { hash: hash });
 
-    newEditorState = EditorState.push(
-      editorState,
-      content,
-      editorState.getLastChangeType(),
-    );
+    newEditorState = EditorState.push(editorState, content, editorState.getLastChangeType());
     newEditorState = EditorState.acceptSelection(newEditorState, selection);
     this.props.setEditorState(newEditorState);
   }
@@ -227,10 +215,7 @@ class Link extends TooltipEntity {
                   {shortenLabel(label)}
                 </a>
                 <div style={buttonContainerStyle}>
-                  <button
-                    className="button button-small Tooltip__button"
-                    onClick={this.onEdit}
-                  >
+                  <button className="button button-small Tooltip__button" onClick={this.onEdit}>
                     Edit
                   </button>
 
