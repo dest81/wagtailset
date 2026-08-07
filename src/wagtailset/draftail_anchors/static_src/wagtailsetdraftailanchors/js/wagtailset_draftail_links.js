@@ -6,6 +6,7 @@ const Icon = window.wagtail.components.Icon;
 const EditorState = window.DraftJS.EditorState;
 const Portal = window.wagtail.components.Portal;
 const Tooltip = window.draftail.Tooltip;
+const LinkModalWorkflowSource = window.draftail.LinkModalWorkflowSource;
 
 import slugify from "slugify";
 
@@ -255,4 +256,9 @@ class Link extends TooltipEntity {
   }
 }
 
-export { onPasteLink, Link };
+window.draftail.registerPlugin({
+  type: "LINK",
+  source: LinkModalWorkflowSource,
+  decorator: Link,
+  onPaste: onPasteLink,
+});
