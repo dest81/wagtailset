@@ -7,7 +7,6 @@ const EditorState = window.DraftJS.EditorState;
 const Portal = window.wagtail.components.Portal;
 const Tooltip = window.draftail.Tooltip;
 
-// import PropTypes from "prop-types";
 import slugify from "slugify";
 
 const shortenLabel = (label) => {
@@ -15,17 +14,14 @@ const shortenLabel = (label) => {
   if (shortened.length > 25) {
     shortened = `${shortened.slice(0, 20)}…`;
   }
-
   return shortened;
 };
 
 const gettext = (text) => {
   const djangoGettext = window.django?.gettext;
-
   if (djangoGettext) {
     return djangoGettext(text);
   }
-
   return text;
 };
 
@@ -37,7 +33,6 @@ const getEmailAddress = (mailto) => mailto.replace("mailto:", "").split("?")[0];
 const getPhoneNumber = (tel) => tel.replace("tel:", "").split("?")[0];
 const getDomainName = (url) => url.replace(/(^\w+:|^)\/\//, "").split("/")[0];
 
-// Determines how to display the link based on its type: page, mail, hash or external.
 const getLinkAttributes = (data) => {
   const url = data.url || null;
   let icon;
@@ -71,12 +66,7 @@ const getLinkAttributes = (data) => {
 };
 
 const djangoUserRegex = /(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*$|^"([\001-\010\013\014\016-\037!#-[\]-\177]|\\[\001-\011\013\014\016-\177])*"$)/i;
-// Compared to Django, changed to remove the end-of-domain `-` check that was done with a negative lookbehind `(?<!-)` (unsupported in Safari), and disallow all TLD hyphens instead.
-// const djangoDomainRegex = /((?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+)(?:[A-Z0-9-]{2,63}(?<!-))$/i;
 const djangoDomainRegex = /((?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+)(?:[A-Z0-9]{2,63})$/i;
-/**
- * See https://docs.djangoproject.com/en/4.0/_modules/django/core/validators/#URLValidator.
- */
 const djangoSchemes = ["http:", "https:", "ftp:", "ftps:"];
 
 const getValidLinkURL = (text, schemes) => {
@@ -89,14 +79,12 @@ const getValidLinkURL = (text, schemes) => {
 
   try {
     const url = new URL(text);
-
     if (schemes.includes(url.protocol)) {
       return text;
     }
   } catch (e) {
     return false;
   }
-
   return false;
 };
 
@@ -141,6 +129,7 @@ class Link extends TooltipEntity {
     const { entityKey, contentState } = this.props;
     const data = contentState.getEntity(entityKey).getData();
 
+    // Read the standalone hash property natively from entity data
     const hash = window.prompt("Hash Link:", data.hash || "");
 
     if (hash != null && hash !== data.hash) {
@@ -156,16 +145,16 @@ class Link extends TooltipEntity {
 
   setHash(hash) {
     const editorState = this.props.getEditorState();
-    let newEditorState = editorState;
-    let content = editorState.getCurrentContent();
+    const content = editorState.getCurrentContent();
     const { entityKey } = this.props;
+
+    // Save hash cleanly as its own custom property inside the entity configuration
     let nextContent = content.mergeEntityData(entityKey, { hash: hash });
 
-    const selection = editorState.getSelection();
-    content = Modifier.mergeBlockData(nextContent, selection, { hash: hash });
+    let newEditorState = EditorState.push(editorState, nextContent, "apply-entity");
 
-    newEditorState = EditorState.push(editorState, content, editorState.getLastChangeType());
-    newEditorState = EditorState.acceptSelection(newEditorState, selection);
+    // Force selection lifecycle refresh to render the tooltip updates instantly
+    newEditorState = EditorState.forceSelection(newEditorState, editorState.getSelection());
     this.props.setEditorState(newEditorState);
   }
 
@@ -175,8 +164,9 @@ class Link extends TooltipEntity {
 
     const { icon, label, url } = getLinkAttributes(data);
     const { showTooltipAt } = this.state;
-    const hash = data.hash || "";
 
+    // Parse the standalone hash attribute directly from the data mapping
+    const hash = data.hash || "";
     const isInternalLink = data.id ? true : false;
 
     let fullUrl = url;
@@ -188,7 +178,6 @@ class Link extends TooltipEntity {
       <a
         href={url}
         role="button"
-        // Use onMouseUp to preserve focus in the text even after clicking.
         onMouseUp={this.openTooltip}
         className="TooltipEntity"
         data-draftail-trigger
@@ -238,7 +227,7 @@ class Link extends TooltipEntity {
                     className="Tooltip__link"
                     style={{ marginTop: "-1em" }}
                   >
-                    Anchor: <br /> #{shortenLabel(hash)}
+                    Anchor: <br /> {hash ? `#${shortenLabel(hash)}` : "None"}
                   </a>
                   <div style={buttonContainerStyle}>
                     <button
@@ -247,12 +236,14 @@ class Link extends TooltipEntity {
                     >
                       {hash ? "Edit" : "Add"}
                     </button>
-                    <button
-                      className="button button-small button-secondary no Tooltip__button"
-                      onClick={this.onRemoveHash}
-                    >
-                      Remove
-                    </button>
+                    {hash && (
+                      <button
+                        className="button button-small button-secondary no Tooltip__button"
+                        onClick={this.onRemoveHash}
+                      >
+                        Remove
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
@@ -263,10 +254,5 @@ class Link extends TooltipEntity {
     );
   }
 }
-
-Link.propTypes = {
-  // entityKey: PropTypes.string.isRequired,
-  // contentState: PropTypes.object.isRequired,
-};
 
 export { onPasteLink, Link };
