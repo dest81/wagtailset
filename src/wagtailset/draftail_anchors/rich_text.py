@@ -54,7 +54,7 @@ def link_entity(props):
     return DOM.create_element("a", link_props, props["children"])
 
 
-class PageHashedLinkHandler(PageLinkHandler):
+class AnchoredPageLinkHandler(PageLinkHandler):
     @classmethod
     def get_many(cls, attrs_list, custom=False):
         # Override LinkHandler.get_many to reduce database queries through the
@@ -104,7 +104,7 @@ class PageHashedLinkHandler(PageLinkHandler):
             return "<a>"
 
 
-class PageHashedLinkElementHandler(LinkElementHandler):
+class AnchoredPageLinkElementHandler(LinkElementHandler):
     def get_attribute_data(self, attrs):
         try:
             page = Page.objects.get(id=attrs["id"]).specific

@@ -7,8 +7,8 @@ from .rich_text import (
     AnchorBlockHandler,
     AnchorIdentifierLinkHandler,
     AnchorIndentifierEntityElementHandler,
-    PageHashedLinkElementHandler,
-    PageHashedLinkHandler,
+    AnchoredPageLinkElementHandler,
+    AnchoredPageLinkHandler,
     anchor_identifier_entity_decorator,
     link_entity,
 )
@@ -143,7 +143,7 @@ def register_rich_text_anchor_identifier_feature(features):
 
 @hooks.register("register_rich_text_features")
 def register_rich_text_page_hashed_feature(features):
-    features.register_link_type(PageHashedLinkHandler)
+    features.register_link_type(AnchoredPageLinkHandler)
 
     # Fixes issue #7: this updates Draftail's whitelist attributes without
     features.register_editor_plugin(
@@ -169,7 +169,7 @@ def register_rich_text_page_hashed_feature(features):
         {
             "from_database_format": {
                 "a[href]": ExternalLinkElementHandler("LINK"),
-                "a[linktype='page']": PageHashedLinkElementHandler("LINK"),
+                "a[linktype='page']": AnchoredPageLinkElementHandler("LINK"),
             },
             "to_database_format": {"entity_decorators": {"LINK": link_entity}},
         },
