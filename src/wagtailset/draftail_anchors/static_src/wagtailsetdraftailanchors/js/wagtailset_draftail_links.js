@@ -1,4 +1,3 @@
-const React = window.React;
 const RichUtils = window.DraftJS.RichUtils;
 const Modifier = window.DraftJS.Modifier;
 const TooltipEntity = window.draftail.TooltipEntity;

@@ -1,6 +1,8 @@
 import wagtail.admin.rich_text.editors.draftail.features as draftail_features
 from wagtail import VERSION as wagtail_version
-from wagtail.admin.rich_text.editors.draftail.features import EntityFeature
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
+
 
 from .rich_text import (
     AnchorBlockConverter,
@@ -51,7 +53,9 @@ def register_rich_text_anchor_identifier_feature(features):
         feature_name,
         draftail_features.EntityFeature(
             control,
-            js=["wagtailsetdraftailanchors/js/wagtailset-draftail-anchor.js"],
+            js=[
+                "wagtailsetdraftailanchors/js/wagtailset-draftail-anchor.js",
+            ],
         ),
     )
 
@@ -145,21 +149,44 @@ def register_rich_text_anchor_identifier_feature(features):
 def register_rich_text_page_hashed_feature(features):
     features.register_link_type(AnchoredPageLinkHandler)
 
-    # Fixes issue #7: this updates Draftail's whitelist attributes without
+    # Exact copy of Wagtail's core 'link' feature definition.
+    # Overriding the full configuration is required to append custom 'hash' attribute
+    # to the metadata, ensuring link anchors survive image block insertion resets
     features.register_editor_plugin(
         "draftail",
         "link",
-        EntityFeature(
+        draftail_features.EntityFeature(
             {
                 "type": "LINK",
-                "attributes": [
-                    "url",
-                    "id",
-                    "parentId",
-                    "hash",  # adds 'hash' to draftail memory states
-                ],
+                "icon": "link",
+                "description": _("Link"),
+                # We want to enforce constraints on which links can be pasted into rich text.
+                # Keep only the attributes Wagtail needs.
+                "attributes": ["url", "id", "parentId", "hash"],
+                "allowlist": {
+                    # Keep pasted links with http/https protocol, and not-pasted links (href = undefined).
+                    "href": "^(http:|https:|mailto:|#|undefined$)",
+                },
+                "chooserUrls": {
+                    "pageChooser": reverse_lazy("wagtailadmin_choose_page"),
+                    "externalLinkChooser": reverse_lazy(
+                        "wagtailadmin_choose_page_external_link"
+                    ),
+                    "emailLinkChooser": reverse_lazy(
+                        "wagtailadmin_choose_page_email_link"
+                    ),
+                    "phoneLinkChooser": reverse_lazy(
+                        "wagtailadmin_choose_page_phone_link"
+                    ),
+                    "anchorLinkChooser": reverse_lazy(
+                        "wagtailadmin_choose_page_anchor_link"
+                    ),
+                },
             },
-            js=["wagtailsetdraftailanchors/js/wagtailset-draftail-links.js"],
+            js=[
+                "wagtailadmin/js/page-chooser-modal.js",
+                "wagtailsetdraftailanchors/js/wagtailset-draftail-links.js",
+            ],
         ),
     )
 
