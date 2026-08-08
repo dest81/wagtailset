@@ -116,7 +116,7 @@ const buttonContainerStyle = {
   float: "right",
 };
 
-class Link extends TooltipEntity {
+class AnchoredPageLink extends TooltipEntity {
   constructor(props) {
     super(props);
     this.onSetHash = this.onSetHash.bind(this);
@@ -259,6 +259,6 @@ class Link extends TooltipEntity {
 window.draftail.registerPlugin({
   type: "LINK",
   source: LinkModalWorkflowSource,
-  decorator: Link,
+  decorator: AnchoredPageLink,
   onPaste: onPasteLink,
 });
