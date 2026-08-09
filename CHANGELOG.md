@@ -5,13 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.1.5 - 2026-08-09
+
+### Fixed
+
+- fix rich text link anchor data loss on image block insertion #7
+
+## 1.1.4 - 2025-07-12
+
+### Fixed
+
+- update state only when it's necessary
+- do not change state during undo
+
+## 1.1.3 - 2025-03-31
+
+### Fixed
+
+- update PageHashedLinkHandler to work with wagtail > 6.0 #4
+
 ## [1.1.2] - 2024-09-29
 
 ### Fixed
 
 - Anchor links not rendered in rich text editor #3
 - Fix documentation
-
 
 ## [1.1.1] - 2023-09-10
 
@@ -42,7 +60,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - extend HeaderAnchorDecorator from TooltipEntity
 - slugify custom header anchor
 - make all buttons in Tooltip small
-
 
 ## [0.0.1] - 2023-07-30
 
