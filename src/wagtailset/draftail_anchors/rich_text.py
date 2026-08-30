@@ -198,8 +198,8 @@ class AnchorBlockConverter:
             "id": block_data.get("anchor") or block_data.get("id"),
         }
 
-        if block_data.get("anchor"):
-            elem_data["anchor"] = block_data.get("anchor")
+        if block_data.get("manual"):
+            elem_data["data-manual-anchor"] = True
 
         # Here, we want to display the block's content so we pass the `children` prop as the last parameter.
         return DOM.create_element(self.tag, elem_data, props["children"])
@@ -225,5 +225,9 @@ class AnchorBlockHandler(BlockElementHandler):
         return DataBlock(
             self.block_type,
             depth=state.list_depth,
-            data={"id": attrs.get("id", ""), "anchor": attrs.get("anchor", "")},
+            # check also 'anchor' attribute to maintain backwards compatibility
+            data={
+                "id": attrs.get("id", ""),
+                "manual": attrs.get("data-manual-anchor", attrs.get("anchor", False)),
+            },
         )
