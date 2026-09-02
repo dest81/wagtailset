@@ -91,30 +91,41 @@ window.draftail.registerPlugin({
   decorator: AnchorIdentifier,
 });
 
-const CopyAnchorButton = ({ identifier }) => {
-  const [didCopy, setDidCopy] = React.useState(false);
+class CopyAnchorButton extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { didCopy: false };
+    this.copyText = this.copyText.bind(this);
+  }
 
-  const copyText = (event) => {
-    // Prevent the button click event from submitting the page form
+  copyText(event) {
+    // prevent button click event from submitting the page form
     event.preventDefault();
-    navigator.clipboard.writeText(identifier);
-    setDidCopy(true);
-  };
+    navigator.clipboard.writeText(this.props.identifier);
+    this.setState({ didCopy: true });
+    setTimeout(() => {
+      this.setState({ didCopy: false });
+    }, 2000);
+  }
 
-  const classes = "button button-small";
-  return (
-    <button
-      className={classes}
-      style={{ marginLeft: "1rem" }}
-      aria-label="Copy anchor identifier"
-      aria-live="polite"
-      role="button"
-      onClick={copyText}
-    >
-      {didCopy ? "Copied" : "Copy"}
-    </button>
-  );
-};
+  render() {
+    const { didCopy } = this.state;
+    const classes = "button button-small";
+
+    return (
+      <button
+        className={classes}
+        style={{ marginLeft: "1rem" }}
+        aria-label="Copy anchor identifier"
+        aria-live="polite"
+        type="button"
+        onClick={this.copyText}
+      >
+        {didCopy ? "Copied" : "Copy"}
+      </button>
+    );
+  }
+}
 
 const anchorifyHeading = (content, blockKey, anchor, manual = false) => {
   const blockMap = content.getBlockMap();
