@@ -11,6 +11,7 @@
 <p align="center">
 <img alt="Wagtail 6" src="https://img.shields.io/badge/Wagtail-6.x-607d8b?logo=wagtail&labelColor=455a64">
 <img alt="Wagtail 7" src="https://img.shields.io/badge/Wagtail-7.x-607d8b?logo=wagtail&labelColor=455a64">
+<img alt="Wagtail 8" src="https://img.shields.io/badge/Wagtail-8.x-607d8b?logo=wagtail&labelColor=455a64">
 </p>
 
 <h4 align="center">Wagtail anchors set.</h4>
